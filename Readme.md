@@ -4,9 +4,9 @@ This guide has been written and tested for Slackware 14.2 and a ROS Kinetic Desk
 have a different version of Slackware, steps might be slightly different.
 
 Some other useful references are:
-..* Install ROS from source: http://wiki.ros.org/Installation/Source
-..* Another guide for installing on Slackware 14.2: http://barelywalking.com/?p=13
-..* A guide for installing on Slackware 14.1: http://barelywalking.com/?p=5
+* Install ROS from source: http://wiki.ros.org/Installation/Source
+* Another guide for installing on Slackware 14.2: http://barelywalking.com/?p=13
+* A guide for installing on Slackware 14.1: http://barelywalking.com/?p=5
 
 Note: ROS still primarily uses Python 2.7 and you should use that version of python for the installation.
 
