@@ -220,7 +220,7 @@ For you it might be a bit different.
 
 NOTE: If you get an output similar to `No definition of [package] for OS version [Slackware_version]`, then 
 the package is not actually defined in the rosdep definitions. You can submit an issue to this repo and I
-will try to fix it ASAP or you can submit a pull request to `https://github.com/ros/rosdistro` with the
+will try to fix it ASAP or you can submit a pull request to https://github.com/ros/rosdistro with the
 implemented fixes. If you are going for the Desktop-Full install you are very likely to get the above message.
 It will tell you which dependencies you must satisfy on your own.
 
@@ -235,7 +235,9 @@ just installed all dependencies. Strangely, rebooting fixed them.*
 
 ###5.1 Set PYTHONPATH
 
-`echo $PYTHONPATH`
+```
+echo $PYTHONPATH
+```
 
 If the above command does not output anything, place this at the end of your ~/.bashrc file:
 ```
@@ -311,8 +313,7 @@ CMake Error at CMakeLists.txt:24 (find_package):
   installed.
 ```
 
-I am in the process of submitting a pull request to fix this problem upstream.
-
+The reason for that is that Slackware's eigen3 package does not come with a `FindEigen3.cmake`.
 
 ###5.4 Build the workspace
 We are now ready to build our workspace
@@ -330,3 +331,36 @@ source ~/ros_catkin_ws/install_isolated/setup.bash
 
 ##6. Enjoy ROS
 
+
+
+
+	sudo sboinstall ninja
+
+
+	HAVE TO USE LATEST VERSION OF CATKIN 0.7.4 - see if that works if you fetch normally
+	ninja might not be needed
+
+
+
+
+. Desktop-Full Install: ROS, rqt, rviz, robot-generic libraries, 2D/3D simulators, navigation and 2D/3D perception
+
+You will need to install more dependencies before you can install the Desktop-Full version of ROS. Most of these
+packages are not readily available for Slackware and you will need to install them from source. I did not have
+enough time to provide a SlackBuild for all of them, but if there are many requests, I will do it. Here is a list
+
+### 1. PCL
+	Point Cloud Library - http://pointclouds.org/
+
+	Note you will also need a higher version of FLANN than the one available on SlackBuilds.org
+
+### 2. FLTK
+	Fulltick - http://www.fltk.org/index.php
+
+### 3. Gazebo
+	Gazebo - http://gazebosim.org/
+
+	You will need a lot of dependencies which are to this date not readily available on SlackBuilds.org. These are:
+	sdformat - http://sdformat.org/
+	orge3d - 
+	iginition-math2
