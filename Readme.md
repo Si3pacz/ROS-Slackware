@@ -21,7 +21,7 @@ sudo python get-pip.py
 ###1.2 Install ros tools
 
 ```
-sudo pip install rosdep rosintall rosinall_generator wstool
+sudo pip install -U rosdep rosinstall rosinstall_generator wstool
 ```
 
 ###1.3 Upgrade rosdep
@@ -172,51 +172,17 @@ rosdep install --from-paths src --ignore-src --rosdistro kinetic -y -s
 ```
 
 This will output a list of commands that contains that rosdep would have otherwise executed. In that list you
-can find the dependencies that you are missing. For me it looks like:
+can find the dependencies that you are missing. It will look like:
 
 ```
 #[sbotools] Installation commands:
   sudo -H sboinstall -r protobuf
-  sudo -H sboinstall -r collada-dom
-  sudo -H sboinstall -r matplotlib
-  sudo -H sboinstall -r hddtemp
-  sudo -H sboinstall -r urdfdom
-  sudo -H sboinstall -r urlgrabber
   sudo -H sboinstall -r sbcl
-  sudo -H sboinstall -r nose
 #[pip] Installation commands:
   sudo -H pip install -U empy
-#[sbotools] Installation commands:
-  sudo -H sboinstall -r PyYAML
-  sudo -H sboinstall -r PyOpenGL
-  sudo -H sboinstall -r paramiko
-  sudo -H sboinstall -r lz4
-  sudo -H sboinstall -r PyQt5
-  sudo -H sboinstall -r urdfdom-headers
-  sudo -H sboinstall -r assimp
-  sudo -H sboinstall -r gtest
-  sudo -H sboinstall -r netifaces
-  sudo -H sboinstall -r coverage
-  sudo -H sboinstall -r numpy
-  sudo -H sboinstall -r mock
-#[pip] Installation commands:
-  sudo -H pip install -U defusedxml
-#[sbotools] Installation commands:
-  sudo -H sboinstall -r ffmpeg
-  sudo -H sboinstall -r pydot
-  sudo -H sboinstall -r qhull
-  sudo -H sboinstall -r graphviz
-  sudo -H sboinstall -r psutil
-  sudo -H sboinstall -r yaml-cpp
-  sudo -H sboinstall -r tinyxml
-  sudo -H sboinstall -r poco
-  sudo -H sboinstall -r console_bridge
-  sudo -H sboinstall -r pygraphviz
-  sudo -H sboinstall -r cppunit
-  sudo -H sboinstall -r ogre
+  ...
 ```
 
-For you it might be a bit different.
 
 NOTE: If you get an output similar to `No definition of [package] for OS version [Slackware_version]`, then 
 the package is not actually defined in the rosdep definitions. You can submit an issue to this repo and I
@@ -224,6 +190,7 @@ will try to fix it ASAP or you can submit a pull request to https://github.com/r
 implemented fixes. If you are going for the Desktop-Full install you are very likely to get the above message.
 It will tell you which dependencies you must satisfy on your own.
 
+http://docs.ros.org/independent/api/rosdep/html/contributing_rules.html
 
 ##5. Build the catking Workspace
 
@@ -235,18 +202,14 @@ just installed all dependencies. Strangely, rebooting fixed them.*
 
 ###5.1 Set PYTHONPATH
 
-```
-echo $PYTHONPATH
-```
 
-If the above command does not output anything, place this at the end of your ~/.bashrc file:
-```
-export PYTHONPATH="~/ros_catkin_ws/src/catkin/python/catkin"
-```
+Place this at the end of your ~/.bashrc file:
 
-Otherwise place this line:
 ```
-export PYTHONPATH="${PYTHONPATH}:~/ros_catkin_ws/src/catkin/python/catkin"
+export PYTHONPATH
+PYTHONPATH=$PYTHONPATH:~/ros_catkin_ws/src/catkin/python/catkin
+PYTHONPATH=$PYTHONPATH:~/ros_catkin_ws/install_isolated/lib64/python2.7/site-packages
+PYTHONPATH=$PYTHONPATH:~/ros_catkin_ws/install_isolated/lib/python2.7/site-packages
 ```
 
 Make the changes take effect:
@@ -279,8 +242,9 @@ NOTE: Making the symlink in `/usr/bin/qmake` point to `qmake-qt5` for some reaso
 
 ###5.3 Fix eigen3 linking problem in geomertic_shapes
 
-Open `~/ros_catkin_ws/src/geometric_shapes/CMakeLists.txt` with your favourite editor.
-Find the line 
+Open `~/ros_catkin_ws/src/geometric_shapes/CMakeLists.txt` and `~/ros_catkin_ws/src/eigen_stl_containers/CMakeLists.txt` 
+with your favourite editor.
+In both files find the line 
 
 ```
 find_package(Eigen3 REQUIRED)
@@ -334,33 +298,4 @@ source ~/ros_catkin_ws/install_isolated/setup.bash
 
 
 
-	sudo sboinstall ninja
 
-
-	HAVE TO USE LATEST VERSION OF CATKIN 0.7.4 - see if that works if you fetch normally
-	ninja might not be needed
-
-
-
-
-. Desktop-Full Install: ROS, rqt, rviz, robot-generic libraries, 2D/3D simulators, navigation and 2D/3D perception
-
-You will need to install more dependencies before you can install the Desktop-Full version of ROS. Most of these
-packages are not readily available for Slackware and you will need to install them from source. I did not have
-enough time to provide a SlackBuild for all of them, but if there are many requests, I will do it. Here is a list
-
-### 1. PCL
-	Point Cloud Library - http://pointclouds.org/
-
-	Note you will also need a higher version of FLANN than the one available on SlackBuilds.org
-
-### 2. FLTK
-	Fulltick - http://www.fltk.org/index.php
-
-### 3. Gazebo
-	Gazebo - http://gazebosim.org/
-
-	You will need a lot of dependencies which are to this date not readily available on SlackBuilds.org. These are:
-	sdformat - http://sdformat.org/
-	orge3d - 
-	iginition-math2
