@@ -62,7 +62,7 @@ sudo installpkg sbotools-2.0.tar.gz
 
 ###2.2 Update your list of pacakges
 
-Make sure to execute this step as some of the dependencies were submitted on SlackBuilds.org recently.
+Make sure to execute this step as some of the dependencies were submitted on SlackBuilds.org very recently.
 ```
 sudo sbocheck
 ```
@@ -103,13 +103,13 @@ sudo ./log4cxx.SlackBuild
 sudo installpkg log4cxx-0.10.0-x86_64-1root.txz
 ```
 
-###2.3.3 Install urdfdom_headers
+###2.3.3 Install urdfdom
 
-Although this package is available on SlackBuilds.org we still need to manually install it beforehand due 
-to reasons I don't wanna go into:
+Although this package is available on SlackBuilds.org we still need to manually beforehand due to a strange way that sbotools handles dependencies:
 
 ```
 sudo sboinstall urdfdom_headers
+sudo sboinstall urdfdom
 ```
 
 
@@ -122,7 +122,7 @@ cd ~/ros_catkin_ws
 ####Desktop-Full Install: 
 *ROS, rqt, rviz, robot-generic libraries, 2D/3D simulators, navigation and 2D/3D perception* 
 
-Note that if you choose this option you will need to install more dependencies on your own. 
+Note that if you choose this option **you will need to install more dependencies on your own**. 
 The guide on this repo will not fully work.
 
 ```
@@ -160,10 +160,6 @@ rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
 ```
 
 Now wait for ages until it is done.
-If you get an error while installing it is very likely to be because the pacakges take a lot of time 
-to build and the cache has updated and no longer will execute sudo commands without a password. In this 
-case just execute the above command again - the script will continue with the unsatisfied dependencies only.
-
 
 If you don't want to use sbotools and pip you can execute
 
@@ -183,39 +179,22 @@ can find the dependencies that you are missing. It will look like:
   ...
 ```
 
-
-NOTE: If you get an output similar to `No definition of [package] for OS version [Slackware_version]`, then 
-the package is not actually defined in the rosdep definitions. You can submit an issue to this repo and I
-will try to fix it ASAP or you can submit a pull request to https://github.com/ros/rosdistro with the
-implemented fixes. If you are going for the Desktop-Full install you are very likely to get the above message.
-It will tell you which dependencies you must satisfy on your own.
-
-http://docs.ros.org/independent/api/rosdep/html/contributing_rules.html
-
-##5. Build the catking Workspace
+##5. Build the catkin Workspace
 
 Now that we have satisfied all dependencies we are almost ready to go. There are a few issues we need to fix
 before building. 
 
-*Sidenote: If for some reason building fails, try rebooting your system. I was getting strange errors as I had 
-just installed all dependencies. Strangely, rebooting fixed them.*
 
 ###5.1 Set PYTHONPATH
 
 
-Place this at the end of your ~/.bashrc file:
+Execute these commands in your current terminal:
 
 ```
-export PYTHONPATH
 PYTHONPATH=$PYTHONPATH:~/ros_catkin_ws/src/catkin/python/catkin
 PYTHONPATH=$PYTHONPATH:~/ros_catkin_ws/install_isolated/lib64/python2.7/site-packages
 PYTHONPATH=$PYTHONPATH:~/ros_catkin_ws/install_isolated/lib/python2.7/site-packages
-```
-
-Make the changes take effect:
-
-```
-source ~/.bashrc
+export PYTHONPATH
 ```
 
 ###5.2 Fix the version of qmake
@@ -240,7 +219,7 @@ compilation terminated.
 NOTE: Making the symlink in `/usr/bin/qmake` point to `qmake-qt5` for some reason did not fix the above error for me.
 
 
-###5.3 Fix eigen3 linking problem in geomertic_shapes
+###5.3 Fix eigen3 linking problem
 
 Open `~/ros_catkin_ws/src/geometric_shapes/CMakeLists.txt` and `~/ros_catkin_ws/src/eigen_stl_containers/CMakeLists.txt` 
 with your favourite editor.
@@ -292,10 +271,56 @@ Wait for ages until it is done. Then
 source ~/ros_catkin_ws/install_isolated/setup.bash
 ```
 
+You can place this command in your `~/.bashrc` to make the changes permanent
+
+###5.5 Fix a possible build bug
+
+In my case there were packages with the same name but different modules that built in 
+`install_isolated/lib64/python2.7/site-packages` and `install_isolated/lib/python2.7/site-packages`.
+This is not correct behavior and is a possible ROS bug that is being fixed. For now we need to fix 
+this manually as it will cause trouble in the future when we use ROS. 
+
+Clone this repo if you have not done it already:
+```
+git clone https://github.com/nikonikolov/ROS-Slackware.git
+```
+
+and execute a script which will move all the modules under `install_isolated/lib64/python2.7/site-packages`
+
+```
+cd ROS-Slackware && ./fixmodules.sh
+```
 
 ##6. Enjoy ROS
 
 
 
+##Possible Errors
 
+###Error installing dependencies via rosdep
+
+If you get an error while installing Slackware using rosdep it is very likely because the pacakges take a lot of time 
+to build. Meanwhile the cache has updated and no longer will execute sudo commands without a password. In this 
+case just execute again
+
+```
+rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
+```
+
+If that also fails, try to manually install the corresponding package that fails using 
+
+```
+sudo sboinstall <package>
+```
+
+The reason is that `rosdep` does not seem to pass a `y` flag for all dependencies that a Slackware package needs
+
+
+###No definition of [package] for OS version [Slackware_version] 
+
+If you get an output similar to `No definition of [package] for OS version [Slackware_version]`, then 
+the package is not actually defined in the rosdep definitions. You can submit an issue to my repo 
+https://github.com/nikonikolov/ROS-Slackwarethis repo and I will try to fix it ASAP or you can manually handle
+it following the instructions on http://docs.ros.org/independent/api/rosdep/html/contributing_rules.html
+If you are going for the Desktop-Full install you are very likely to get the above message.
 
