@@ -60,7 +60,7 @@ wget https://pink-mist.github.io/sbotools/downloads/sbotools-2.0.tar.gz
 sudo installpkg sbotools-2.0.tar.gz
 ```
 
-###2.2 Update your list of pacakges
+###2.2 Update your list of packages
 
 Make sure to execute this step as some of the dependencies were submitted on SlackBuilds.org very recently.
 ```
@@ -69,9 +69,9 @@ sudo sbocheck
 
 ###2.3 Install some of the dependencies
 
-We are going to preinstall some of the ROS dependencies because they are more specific.
+We are going to preinstall some of the ROS dependencies because they are more special.
 
-###2.3.1 Install VTK
+####2.3.1 Install VTK
 
 VTK requires to be built with JAVA support which needs to be set manually.
 First we need to install `jdk`. Installing it directly from sbotools fails because it cannot automatically
@@ -91,7 +91,7 @@ When asked whether you want to set options when building VTK, say yes and pass t
 JAVA=yes
 ```
 
-###2.3.2 Install log4cxx
+####2.3.2 Install log4cxx
 
 log4cxx is not available on SlackBuilds.org so we need to install it manually. It is available as part of this
 repository:
@@ -103,7 +103,7 @@ sudo ./log4cxx.SlackBuild
 sudo installpkg log4cxx-0.10.0-x86_64-1root.txz
 ```
 
-###2.3.3 Install urdfdom
+####2.3.3 Install urdfdom
 
 Although this package is available on SlackBuilds.org we still need to manually beforehand due to a strange way that sbotools handles dependencies:
 
@@ -161,7 +161,7 @@ rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
 
 Now wait for ages until it is done.
 
-If you don't want to use sbotools and pip you can execute
+If you don't want to use sbotools and pip to install dependencies, instead of the above you can execute
 
 ```
 rosdep install --from-paths src --ignore-src --rosdistro kinetic -y -s
@@ -295,11 +295,11 @@ cd ROS-Slackware && ./fixmodules.sh
 
 
 
-##Possible Errors
+#Possible Errors
 
 ###Error installing dependencies via rosdep
 
-If you get an error while installing Slackware using rosdep it is very likely because the pacakges take a lot of time 
+If you get an error while installing Slackware using rosdep it is very likely because the packages take a lot of time 
 to build. Meanwhile the cache has updated and no longer will execute sudo commands without a password. In this 
 case just execute again
 
