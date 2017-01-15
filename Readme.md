@@ -24,20 +24,7 @@ sudo python get-pip.py
 sudo pip install -U rosdep rosinstall rosinstall_generator wstool
 ```
 
-###1.3 Upgrade rosdep
-To current date, the latest release of rosdep does not include the definitions for Slackware.
-The master branch of rosdep on github includes it. 
-If you have a version of rosdep above `0.11.4` go to step 1.4. If you have version `0.11.4` or earlier
-you need to update rosdep with the master branch on github:
-
-
-```
-git clone https://github.com/ros-infrastructure/rosdep.git
-cd rosdep
-sudo pip install -U .
-```
-
-###1.4 Initialize rosdep 
+###1.3 Initialize rosdep 
 ```
 sudo rosdep init
 rosdep update
@@ -122,8 +109,7 @@ cd ~/ros_catkin_ws
 ####Desktop-Full Install: 
 *ROS, rqt, rviz, robot-generic libraries, 2D/3D simulators, navigation and 2D/3D perception* 
 
-Note that if you choose this option **you will need to install more dependencies on your own**. 
-The guide on this repo will not fully work.
+This guide has been tested for this installation.
 
 ```
 rosinstall_generator desktop_full --rosdistro kinetic --deps --wet-only --tar > kinetic-desktop-full-wet.rosinstall
@@ -134,7 +120,7 @@ wstool init -j8 src kinetic-desktop-full-wet.rosinstall
 ####Desktop Install (recommended): 
 *ROS, rqt, rviz, and robot-generic libraries* 
 
-Note that this guide has been written and tested for this kind of installation
+This guide has been tested for this installation.
 
 ```
 rosinstall_generator desktop --rosdistro kinetic --deps --wet-only --tar > kinetic-desktop-wet.rosinstall
@@ -197,68 +183,22 @@ PYTHONPATH=$PYTHONPATH:~/ros_catkin_ws/install_isolated/lib/python2.7/site-packa
 export PYTHONPATH
 ```
 
-###5.2 Fix the version of qmake
+###5.2 Fix build issues
 
-Slackware uses qt4 by default. We need to make a fix in the `python_qt_bindings` package.
-Open `~/ros_catkin_ws/src/python_qt_binding/cmake/sip_configure.py` with your favourite editor. Find the
-lines:
-```
-env['QT_SELECT'] = '5'
-qtconfig = subprocess.check_output(
-    ['qmake', '-query'], env=env, universal_newlines=True)
-```
-Change `qmake` to `qmake-qt5` and save.
+If we try to build the workspace now, we will run in build erros due to Slackware managing some packages differently. 
+We are going to fix them by applying a custom-made patch. It makes some slight changes in the source files to fix 
+cmake linking errors and make sure qt5 is used.
 
-If you don't do this you will get an error while building:
-```
-/usr/share/sip/PyQt5/QtCore/qregularexpression.sip:26:32: fatal error: qregularexpression.h: No such file or directory
-compilation terminated.
-```
-
-
-NOTE: Making the symlink in `/usr/bin/qmake` point to `qmake-qt5` for some reason did not fix the above error for me.
-
-
-###5.3 Fix eigen3 linking problem
-
-Open `~/ros_catkin_ws/src/geometric_shapes/CMakeLists.txt` and `~/ros_catkin_ws/src/eigen_stl_containers/CMakeLists.txt` 
-with your favourite editor.
-In both files find the line 
+Navigate to the `ROS-Slackware` repo you cloned previously. From there execute the script which will apply the patch. 
+Note that the script expects you to have your workspace in '~/ros_catkin_ws':
 
 ```
-find_package(Eigen3 REQUIRED)
+./patch.sh
 ```
 
-and substitute it with
+Note you might run into some errors if you did not choose desktop-full installation. Just ignore them.
 
-```
-find_package( PkgConfig )
-pkg_check_modules( EIGEN3 REQUIRED eigen3 )
-include_directories( ${EIGEN3_INCLUDE_DIRS} )	
-```
-Save and exit. Not fixing the above caused an error:
-
-```
-CMake Error at CMakeLists.txt:24 (find_package):
-  By not providing "FindEigen3.cmake" in CMAKE_MODULE_PATH this project has
-  asked CMake to find a package configuration file provided by "Eigen3", but
-  CMake did not find one.
-
-  Could not find a package configuration file provided by "Eigen3" with any
-  of the following names:
-
-    Eigen3Config.cmake
-    eigen3-config.cmake
-
-  Add the installation prefix of "Eigen3" to CMAKE_PREFIX_PATH or set
-  "Eigen3_DIR" to a directory containing one of the above files.  If "Eigen3"
-  provides a separate development package or SDK, be sure it has been
-  installed.
-```
-
-The reason for that is that Slackware's eigen3 package does not come with a `FindEigen3.cmake`.
-
-###5.4 Build the workspace
+###5.3 Build the workspace
 We are now ready to build our workspace
 
 ```
@@ -266,61 +206,78 @@ cd ~/ros_catkin_ws
 ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release
 ```
 
-Wait for ages until it is done. Then
+Wait for ages until it is done. 
+
+#### Desktop-full install
+
+If you are going for the desktop-full install and you have a 64bit version of Slackware, you are going to run into a build 
+error which will look something like this:
+
+```
+==> Processing catkin package: 'gazebo_plugins'
+...
+Traceback (most recent call last):
+  File "/home/niko/ros_catkin_ws/src/gazebo_ros_pkgs/gazebo_plugins/cfg/GazeboRosCamera.cfg", line 6, in <module>
+    from dynamic_reconfigure.msg import SensorLevels
+ImportError: No module named msg
+CMakeFiles/gazebo_plugins_gencfg.dir/build.make:87: recipe for target '/home/niko/ros_catkin_ws/devel_isolated/gazebo_plugins/include/gazebo_plugins/GazeboRosCameraConfig.h' failed
+make[2]: *** [/home/niko/ros_catkin_ws/devel_isolated/gazebo_plugins/include/gazebo_plugins/GazeboRosCameraConfig.h] Error 1
+CMakeFiles/Makefile2:1489: recipe for target 'CMakeFiles/gazebo_plugins_gencfg.dir/all' failed
+make[1]: *** [CMakeFiles/gazebo_plugins_gencfg.dir/all] Error 2
+...
+<== Failed to process package 'gazebo_plugins': 
+  Command '['/home/niko/ros_catkin_ws/install_isolated/env.sh', 'make', '-j8', '-l8']' returned non-zero exit status 2
+```
+
+This error cannot be prevented beforehand because of a bug in the `catkin` build system which is currently being fixed. 
+In the meantime, fix the error by navigating to the `ROS-Slackware` repo you cloned beforehand and execute:
+
+```
+./fixmodules.sh
+```
+Note that the script expects you to have your workspace in '~/ros_catkin_ws'.
+
+Now get back to the ROS workspace and continue:
+
+```
+cd ~/ros_catkin_ws
+./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release
+```
+
+Everything should install successfully
+
+###5.3 Finalize installation
+
 ```
 source ~/ros_catkin_ws/install_isolated/setup.bash
 ```
 
-You can place this command in your `~/.bashrc` to make the changes permanent
-
-###5.5 Fix a possible build bug
-
-In my case there were packages with the same name but different modules that built in 
-`install_isolated/lib64/python2.7/site-packages` and `install_isolated/lib/python2.7/site-packages`.
-This is not correct behavior and is a possible ROS bug that is being fixed. For now we need to fix 
-this manually as it will cause trouble in the future when we use ROS. 
-
-Clone this repo if you have not done it already:
-```
-git clone https://github.com/nikonikolov/ROS-Slackware.git
-```
-
-and execute a script which will move all the modules under `install_isolated/lib64/python2.7/site-packages`
+You are recommended to place this command in your `~/.bashrc` to make the changes permanent:
 
 ```
-cd ROS-Slackware && ./fixmodules.sh
+echo "~/ros_catkin_ws/install_isolated/setup.bash" >> ~/.bashrc
 ```
+
+###5.4 Fix a possible build bug
+
+If you are on a Slackware 64bit system, you must fix a future runtime problem which is result of
+a bug in the `catkin` build system (currently being fixed). In particular some packages with the 
+same name but different modules were built in both `install_isolated/lib64/python2.7/site-packages` 
+and `install_isolated/lib/python2.7/site-packages`. This is incorrect as it causes python errors 
+later. 
+
+Navigate to the `ROS-Slackware` repo you cloned previously and execute from there:
+
+```
+./fixmodules.sh
+```
+
+The script will simply move all modules in `install_isolated/lib64/python2.7/site-packages`
 
 ##6. Enjoy ROS
 
 
+#Issues
 
-#Possible Errors
-
-###Error installing dependencies via rosdep
-
-If you get an error while installing Slackware using rosdep it is very likely because the packages take a lot of time 
-to build. Meanwhile the cache has updated and no longer will execute sudo commands without a password. In this 
-case just execute again
-
-```
-rosdep install --from-paths src --ignore-src --rosdistro kinetic -y
-```
-
-If that also fails, try to manually install the corresponding package that fails using 
-
-```
-sudo sboinstall <package>
-```
-
-The reason is that `rosdep` does not seem to pass a `y` flag for all dependencies that a Slackware package needs
-
-
-###No definition of [package] for OS version [Slackware_version] 
-
-If you get an output similar to `No definition of [package] for OS version [Slackware_version]`, then 
-the package is not actually defined in the rosdep definitions. You can submit an issue to my repo 
-https://github.com/nikonikolov/ROS-Slackwarethis repo and I will try to fix it ASAP or you can manually handle
-it following the instructions on http://docs.ros.org/independent/api/rosdep/html/contributing_rules.html
-If you are going for the Desktop-Full install you are very likely to get the above message.
-
+Make sure to check `PossibleIssues.md`. If you don't think your issue is related to the contents of the file,
+file an issue to this repo.

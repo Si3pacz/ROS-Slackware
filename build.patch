@@ -1,0 +1,71 @@
+diff --git a/src/eigen_stl_containers/CMakeLists.txt b/src/eigen_stl_containers/CMakeLists.txt
+index 6372b0c..b7a3288 100644
+--- a/src/eigen_stl_containers/CMakeLists.txt
++++ b/src/eigen_stl_containers/CMakeLists.txt
+@@ -5,7 +5,9 @@ find_package(catkin REQUIRED)
+ 
+ # we don't build anything here, but in order to export the right
+ # build flags in catkin_package(), we still have to find Eigen3 here
+-find_package(Eigen3 REQUIRED)
++find_package( PkgConfig ) 
++pkg_check_modules( EIGEN3 REQUIRED eigen3 ) 
++include_directories( ${EIGEN3_INCLUDE_DIRS} )
+ 
+ # eigen 3.2 (wily) only provdies EIGEN3_INCLUDE_DIR, not EIGEN3_INCLUDE_DIRS
+ if(NOT EIGEN3_INCLUDE_DIRS)
+diff --git a/src/geometric_shapes/CMakeLists.txt b/src/geometric_shapes/CMakeLists.txt
+index 51065b8..a0de386 100644
+--- a/src/geometric_shapes/CMakeLists.txt
++++ b/src/geometric_shapes/CMakeLists.txt
+@@ -21,7 +21,8 @@ find_package(Boost REQUIRED system filesystem)
+ 
+ find_package(console_bridge REQUIRED)
+ 
+-find_package(Eigen3 REQUIRED)
++find_package( PkgConfig ) 
++pkg_check_modules( EIGEN3 REQUIRED eigen3 ) 
+ 
+ find_package(octomap REQUIRED)
+ 
+diff --git a/src/perception_pcl/pcl_ros/CMakeLists.txt b/src/perception_pcl/pcl_ros/CMakeLists.txt
+index 9665fd3..7a331e8 100644
+--- a/src/perception_pcl/pcl_ros/CMakeLists.txt
++++ b/src/perception_pcl/pcl_ros/CMakeLists.txt
+@@ -4,7 +4,8 @@ project(pcl_ros)
+ ## Find system dependencies
+ find_package(cmake_modules REQUIRED)
+ find_package(Boost REQUIRED COMPONENTS system filesystem thread)
+-find_package(Eigen3 REQUIRED)
++find_package( PkgConfig ) 
++pkg_check_modules( EIGEN3 REQUIRED eigen3 ) 
+ find_package(PCL 1.7 REQUIRED)
+ 
+ if(NOT "${PCL_LIBRARIES}" STREQUAL "")
+diff --git a/src/python_qt_binding/cmake/sip_configure.py b/src/python_qt_binding/cmake/sip_configure.py
+index e7dc886..cce143d 100644
+--- a/src/python_qt_binding/cmake/sip_configure.py
++++ b/src/python_qt_binding/cmake/sip_configure.py
+@@ -13,7 +13,7 @@ class Configuration(sipconfig.Configuration):
+         env = copy(os.environ)
+         env['QT_SELECT'] = '5'
+         qtconfig = subprocess.check_output(
+-            ['qmake', '-query'], env=env, universal_newlines=True)
++            ['qmake-qt5', '-query'], env=env, universal_newlines=True)
+         qtconfig = dict(line.split(':', 1) for line in qtconfig.splitlines())
+         pyqtconfig = {
+             'qt_archdata_dir': qtconfig['QT_INSTALL_DATA'],
+diff --git a/src/robot_state_publisher/CMakeLists.txt b/src/robot_state_publisher/CMakeLists.txt
+index 89dd432..bf79d92 100644
+--- a/src/robot_state_publisher/CMakeLists.txt
++++ b/src/robot_state_publisher/CMakeLists.txt
+@@ -5,7 +5,9 @@ find_package(orocos_kdl REQUIRED)
+ find_package(catkin REQUIRED
+   COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser rostest
+ )
+-find_package(Eigen3 REQUIRED)
++find_package( PkgConfig ) 
++pkg_check_modules( EIGEN3 REQUIRED eigen3 ) 
++include_directories( ${EIGEN3_INCLUDE_DIRS} )
+ 
+ find_package(urdfdom_headers REQUIRED)
+ 

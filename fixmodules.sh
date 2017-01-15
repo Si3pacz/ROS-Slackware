@@ -6,12 +6,10 @@ for dir in $SOURCE_PATH/*/ ; do
 
     dir_base="$(basename $dir)"
 
-    if [ -d $DEST_PATH/$dir_base ]; then
-    	mv $dir/* $DEST_PATH/$dir_base
-    	rm -rf $dir
-    else
-    	mv $dir $DEST_PATH/
-    fi
+    echo "Copying $dir to $DEST_PATH"
+    cp -r $dir $DEST_PATH
+    echo "Removing $dir"
+    rm -rf $dir
 done
 
 
