@@ -1,0 +1,10 @@
+--- src/opencv3/cmake/FindCUDA.cmake.orig	2017-03-15 07:19:44.000000000 +0100
++++ src/opencv3/cmake/FindCUDA.cmake	2017-09-20 23:41:11.222525831 +0200
+@@ -448,6 +448,7 @@
+ 
+ # Extra user settable flags
+ set(CUDA_NVCC_FLAGS "" CACHE STRING "Semi-colon delimit multiple arguments.")
++set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11 -D__CORRECT_ISO_CPP11_MATH_H_PROTO --expt-relaxed-constexpr" )
+ 
+ if(CMAKE_GENERATOR MATCHES "Visual Studio")
+   set(CUDA_HOST_COMPILER "$(VCInstallDir)bin" CACHE FILEPATH "Host side compiler used by NVCC")

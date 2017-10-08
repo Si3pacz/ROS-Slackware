@@ -1,0 +1,11 @@
+--- src/python_qt_binding/cmake/sip_configure.py.orig	2017-01-23 19:45:02.000000000 +0100
++++ src/python_qt_binding/cmake/sip_configure.py	2017-09-20 17:37:32.247674018 +0200
+@@ -13,7 +13,7 @@
+         env = copy(os.environ)
+         env['QT_SELECT'] = '5'
+         qtconfig = subprocess.check_output(
+-            ['qmake', '-query'], env=env, universal_newlines=True)
++            ['qmake-qt5', '-query'], env=env, universal_newlines=True)
+         qtconfig = dict(line.split(':', 1) for line in qtconfig.splitlines())
+         pyqtconfig = {
+             'qt_archdata_dir': qtconfig['QT_INSTALL_DATA'],

@@ -1,0 +1,102 @@
+--- src/perception_pcl/pcl_ros/CMakeLists.txt.orig	2016-05-08 15:42:54.000000000 +0200
++++ src/perception_pcl/pcl_ros/CMakeLists.txt	2017-09-21 20:04:55.849649901 +0200
+@@ -4,7 +4,11 @@
+ ## Find system dependencies
+ find_package(cmake_modules REQUIRED)
+ find_package(Boost REQUIRED COMPONENTS system filesystem thread)
+-find_package(Eigen3 REQUIRED)
++
++find_package( PkgConfig ) 
++pkg_check_modules( EIGEN3 REQUIRED eigen3 ) 
++include_directories( ${EIGEN3_INCLUDE_DIRS} )
++
+ find_package(PCL 1.7 REQUIRED)
+ 
+ if(NOT "${PCL_LIBRARIES}" STREQUAL "")
+@@ -30,6 +34,11 @@
+   tf2_eigen
+ )
+ 
++find_package(Qt4 REQUIRED
++  QtCore
++  QtGui
++)
++
+ ## Add include directories
+ include_directories(include
+   ${Boost_INCLUDE_DIRS}
+@@ -81,7 +90,7 @@
+ 
+ ## Declare the pcl_ros_tf library
+ add_library(pcl_ros_tf src/transforms.cpp)
+-target_link_libraries(pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries(pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ add_dependencies(pcl_ros_tf pcl_ros_generate_messages_cpp ${catkin_EXPORTED_TARGETS})
+ 
+ ## Nodelets
+@@ -94,7 +103,7 @@
+   src/pcl_ros/io/io.cpp
+   src/pcl_ros/io/pcd_io.cpp
+ )
+-target_link_libraries(pcl_ros_io pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries(pcl_ros_io pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ class_loader_hide_library_symbols(pcl_ros_io)
+ 
+ ## Declare the pcl_ros_features library
+@@ -113,7 +122,7 @@
+   src/pcl_ros/features/principal_curvatures.cpp
+   src/pcl_ros/features/vfh.cpp
+ )
+-target_link_libraries (pcl_ros_features ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries (pcl_ros_features ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ add_dependencies(pcl_ros_features ${PROJECT_NAME}_gencfg)
+ class_loader_hide_library_symbols(pcl_ros_features)
+ 
+@@ -129,7 +138,7 @@
+   src/pcl_ros/filters/voxel_grid.cpp
+   src/pcl_ros/filters/crop_box.cpp
+ )
+-target_link_libraries(pcl_ros_filters pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries(pcl_ros_filters pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ add_dependencies(pcl_ros_filters ${PROJECT_NAME}_gencfg)
+ class_loader_hide_library_symbols(pcl_ros_filters)
+ 
+@@ -141,7 +150,7 @@
+   src/pcl_ros/segmentation/segment_differences.cpp
+   src/pcl_ros/segmentation/segmentation.cpp
+ )
+-target_link_libraries(pcl_ros_segmentation pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries(pcl_ros_segmentation pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ add_dependencies(pcl_ros_segmentation ${PROJECT_NAME}_gencfg)
+ class_loader_hide_library_symbols(pcl_ros_segmentation)
+ 
+@@ -152,14 +161,14 @@
+   src/pcl_ros/surface/convex_hull.cpp
+   src/pcl_ros/surface/moving_least_squares.cpp
+ )
+-target_link_libraries(pcl_ros_surface ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries(pcl_ros_surface ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ add_dependencies(pcl_ros_surface ${PROJECT_NAME}_gencfg)
+ class_loader_hide_library_symbols(pcl_ros_surface)
+ 
+ ## Tools
+ 
+ add_executable(pcd_to_pointcloud tools/pcd_to_pointcloud.cpp)
+-target_link_libraries(pcd_to_pointcloud ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries(pcd_to_pointcloud ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ 
+ add_executable(pointcloud_to_pcd tools/pointcloud_to_pcd.cpp)
+ target_link_libraries(pointcloud_to_pcd ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARY_DIRS} ${PCL_LIBRARIES})
+@@ -168,10 +177,10 @@
+ target_link_libraries(bag_to_pcd pcl_ros_tf ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARY_DIRS} ${PCL_LIBRARIES})
+ 
+ add_executable(convert_pcd_to_image tools/convert_pcd_to_image.cpp)
+-target_link_libraries(convert_pcd_to_image ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries(convert_pcd_to_image ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ 
+ add_executable(convert_pointcloud_to_image tools/convert_pointcloud_to_image.cpp)
+-target_link_libraries(convert_pointcloud_to_image ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES})
++target_link_libraries(convert_pointcloud_to_image ${Boost_LIBRARIES} ${catkin_LIBRARIES} ${Eigen3_LIBRARIES} ${PCL_LIBRARIES} Qt4::QtCore Qt4::QtGui)
+ 
+ #############
+ ## Testing ##

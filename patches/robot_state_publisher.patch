@@ -1,0 +1,14 @@
+--- src/robot_state_publisher/CMakeLists.txt.orig	2017-01-05 19:45:26.000000000 +0100
++++ src/robot_state_publisher/CMakeLists.txt	2017-09-20 17:37:11.756673794 +0200
+@@ -5,7 +5,10 @@
+ find_package(catkin REQUIRED
+   COMPONENTS roscpp rosconsole rostime tf tf2_ros tf2_kdl kdl_parser rostest
+ )
+-find_package(Eigen3 REQUIRED)
++
++find_package( PkgConfig ) 
++pkg_check_modules( EIGEN3 REQUIRED eigen3 ) 
++include_directories( ${EIGEN3_INCLUDE_DIRS} )
+ 
+ find_package(urdfdom_headers REQUIRED)
+ 
