@@ -4,7 +4,7 @@
 The gazebo has the following optional dependencies that you likely
 don't have installed. If you want them, you will need to rebuild gazebo and ROS:
 
-# Available on SlackBuilds:
+### Available on SlackBuilds:
 
  - hdf5
  - gts (GNU Triangulated Surface Library) - enables CSG support
@@ -12,7 +12,7 @@ don't have installed. If you want them, you will need to rebuild gazebo and ROS:
  - GDAL - enables support for Digital elevation terrains
  - graphviz - enables support for Model editor's schematic view and OpenSource Virtual Reality (OSVR)
 
-# Not yet available on SlackBuilds:
+### Not yet available on SlackBuilds:
 
  - Simbody - https://github.com/simbody/simbody
  - DART - http://dartsim.github.io/index.html
@@ -25,11 +25,11 @@ The gazebo has the following optional dependencies that you likely
 don't have installed. If you want them, you will need to rebuild PCL and ROS:
 
 
-#Available on SlackBuilds: 
+### Available on SlackBuilds: 
  - qhull
  - cudatoolkit
 
-#Not yet available on SlackBuilds:
+### Not yet available on SlackBuilds:
 
  - OpenNI - enables OpenNI grabber support - https://github.com/OpenNI/OpenNI ; http://structure.io/openni
 

@@ -102,3 +102,5 @@ A messy fix at the moment. Seems like an upstream problem
 the system OpenCV library. Details here: https://answers.ros.org/question/272355/opencv-python-system-conflict/
 
 3. PCL works only with QT4. See `perception_pcl.pathc` and PCL package on SlackBuilds.org.
+
+4. Also check [this file with possible dependency issues](PossibleIssues.md)
